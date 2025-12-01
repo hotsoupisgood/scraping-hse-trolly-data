@@ -1,0 +1,103 @@
+# HSE Hospital to Region Mapping
+# This file contains mappings of hospitals to their administrative regions for different years
+
+# =============================================================================
+# 2023 MAPPING (Pre-reorganization, 3 regions)
+# =============================================================================
+# Note: In 2023, "HSE Dublin and South East" was a MEGA-REGION containing all
+# South, Southwest, West, and Northwest hospitals
+
+HOSPITAL_REGION_MAP_2023 = {
+    # Dublin and North East
+    "Beaumont Hospital": "HSE Dublin and North East",
+    "Cavan General Hospital": "HSE Dublin and North East",
+    "Connolly Hospital Blanchardstown": "HSE Dublin and North East",
+    "Mater Misericordiae University Hospital": "HSE Dublin and North East",
+    "Midland Regional Hospital Mullingar": "HSE Dublin and North East",
+    "Our Lady Of Lourdes Hospital Drogheda": "HSE Dublin and North East",
+
+    # Dublin and Midlands
+    "Midland Regional Hospital Portlaoise": "HSE Dublin and Midlands",
+    "Naas General Hospital": "HSE Dublin and Midlands",
+    "St James's Hospital": "HSE Dublin and Midlands",
+    "St Vincent's University Hospital": "HSE Dublin and Midlands",
+    "Tallaght Hospital": "HSE Dublin and Midlands",
+
+    # Dublin and South East (MEGA-REGION)
+    "Bantry General Hospital": "HSE Dublin and South East",
+    "Cork University Hospital": "HSE Dublin and South East",
+    "Galway University Hospital": "HSE Dublin and South East",
+    "Letterkenny University Hospital": "HSE Dublin and South East",
+    "Limerick University Hospital": "HSE Dublin and South East",
+    "Mayo University Hospital": "HSE Dublin and South East",
+    "Mercy University Hospital": "HSE Dublin and South East",
+    "Sligo University Hospital": "HSE Dublin and South East",
+    "South Tipperary General Hospital": "HSE Dublin and South East",
+    "St Luke's Hospital Kilkenny": "HSE Dublin and South East",
+    "University Hospital Waterford": "HSE Dublin and South East",
+    "Wexford General Hospital": "HSE Dublin and South East",
+}
+
+# =============================================================================
+# 2024+ MAPPING (Post-reorganization, 6 regions)
+# =============================================================================
+# Note: Uses "&" instead of "and", and splits the old mega-region into 4 regions
+
+HOSPITAL_REGION_MAP_2024_CORRECTED = {
+    # Dublin & North East
+    "Beaumont Hospital": "HSE Dublin & North East",
+    "Cavan General Hospital": "HSE Dublin & North East",
+    "Connolly Hospital Blanchardstown": "HSE Dublin & North East",
+    "Mater Misericordiae University Hospital": "HSE Dublin & North East",
+    "Our Lady Of Lourdes Hospital Drogheda": "HSE Dublin & North East",
+
+    # Dublin & Midlands
+    "Midland Regional Hospital Portlaoise": "HSE Dublin & Midlands",
+    "Midland Regional Hospital Mullingar": "HSE Dublin & Midlands",
+    "Naas General Hospital": "HSE Dublin & Midlands",
+    "St James's Hospital": "HSE Dublin & Midlands",
+    "St Vincent's University Hospital": "HSE Dublin & Midlands",
+    "Tallaght Hospital": "HSE Dublin & Midlands",
+
+    # Dublin & South East (now truly SE only, not a mega-region)
+    "St Luke's Hospital Kilkenny": "HSE Dublin & South East",
+    "University Hospital Waterford": "HSE Dublin & South East",
+    "Wexford General Hospital": "HSE Dublin & South East",
+
+    # South West (NEW region, split from old mega-region)
+    # Note: Bantry transitioned from Dublin & South East to South West on Feb 1, 2024
+    "Bantry General Hospital": "HSE South West",
+    "Cork University Hospital": "HSE South West",
+    "Mercy University Hospital": "HSE South West",
+    "South Tipperary General Hospital": "HSE South West",
+
+    # Mid West (NEW region, split from old mega-region)
+    # Note: Ennis transitioned from South West to Mid West on Feb 1, 2024
+    "Ennis Hospital": "HSE Mid West",
+    "Limerick University Hospital": "HSE Mid West",
+
+    # West & North West (NEW region, split from old mega-region)
+    # Note: Galway transitioned from Mid West to West & North West on Feb 1, 2024
+    "Galway University Hospital": "HSE West & North West",
+    "Letterkenny University Hospital": "HSE West & North West",
+    "Mayo University Hospital": "HSE West & North West",
+    "Sligo University Hospital": "HSE West & North West",
+}
+
+# =============================================================================
+# NOTES ON REGIONAL TRANSITIONS AND ODD MAPPINGS
+# =============================================================================
+#
+# TRANSITION TIMING:
+# - The major regional reorganization occurred between Jan 1, 2024 and Feb 1, 2024
+# - Bantry General Hospital: Moved from "HSE Dublin and South East" to "HSE South West" on Feb 1, 2024
+#   (Confirmed via website: operates under Cork University Hospital in HSE South region)
+#
+# GEOGRAPHICALLY ODD MAPPINGS THAT STILL NEED VERIFICATION:
+# These mappings are based on actual position in the scraped data, but seem geographically wrong:
+#
+# - Ennis Hospital → "HSE South West"
+#   (Ennis is in Clare, seems like it should be Mid West with Limerick)
+#
+# - Galway University Hospital → "HSE Mid West"
+#   (Galway seems like it should be West & North West with Mayo/Sligo/Letterkenny)
