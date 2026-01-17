@@ -1,0 +1,208 @@
+---
+title: "AR1 Model"
+output:
+  pdf_document: default
+---
+
+```{r}
+library('rjags')
+library(dplyr)
+library(tibble)
+library(stringr)
+```
+
+# AR(1) MODEL
+
+### Preprocess
+
+#### Load data
+
+Loading data in as a wide data frame
+
+With \~ rows (regions) x columns (weeks)
+
+1st column is the region names
+
+```{r}
+uecDf    = read.csv('data/wide_weekly_scaledPer10k.csv')
+regions  = uecDf$Region # saving region names
+n.region = length(uecDf$Region) # number of regions
+uecDf    = uecDf %>% select(-Region) # remove region col
+n.weeks  = length(names(uecDf))
+head(uecDf)
+```
+
+#### Reformat Dataframe to Matrix
+
+Formatting as matrix with \~ rows (regions) x columns (weeks)
+
+```{r}
+uecMat = as.matrix(uecDf)
+```
+
+### JAGs Model
+
+```{r}
+model=
+"
+model{
+  # Iterate through the regions
+  for(i in 1:I){
+  
+    #------------
+    #Likelihood
+    #------------
+    
+    # Set first data point in region i to normal
+    y[i,1] ~ dnorm(mu[i,1], tau[i])
+
+    # Set second on data points to the AR1 model with a mean with a seasonal component
+    for(t in 2:T){
+      y[i,t] ~ dnorm(mu[i,t] + (phi * (y[i,t-1] - mu[i,t-1])), tau[i])
+    }
+    
+    # Assign mean to each time point
+    # Beta  ~ cosine coeffecient scaler
+    # Gamma ~ sine coeffecient scaler
+    for(t in 1:T){
+      mu[i,t] <- alpha[i] +
+                 beta[i]  * cos((2 * pi) * (t/52)) +
+                 gamma[i] * sin((2 * pi) * (t/52))
+    }
+  
+    #------------
+    #Uninformative Priors
+    #------------
+    
+    alpha[i] ~ dnorm(0, 0.001)
+    beta[i]  ~ dnorm(0, 0.001)
+    gamma[i] ~ dnorm(0, 0.001)
+    tau[i]   ~ dgamma(0.001, 0.001)
+  }
+  phi ~ dunif(-1, 1)
+}
+"
+```
+
+| Variable | Definition                                  |
+|----------|---------------------------------------------|
+| y        | trollies per 10,000 population              |
+| i        | Region                                      |
+| t        | Week                                        |
+| alpha    | Auto correlation model parameter            |
+| beta     | seasonal effect (sin wave)                  |
+| gamma    | seasonal effect (cos wave)                  |
+| tau      |                                             |
+| phi      | autocorrelation coeffecent (t-1 dependence) |
+
+### 
+
+```{r}
+exp_jags = jags.model(textConnection(model),
+                      list(y  = uecMat,
+                           I  = n.region,
+                           T  = n.weeks,
+                           pi = pi), n.chains = 4)
+```
+
+```{r}
+update(exp_jags, n.iter = 10000)
+```
+
+```{r}
+# Choose the parameters to watch
+model_parameters =  c("alpha","beta","gamma","tau","phi","mu")
+# Set up samples
+exp_sim=coda.samples(model=exp_jags, 
+                     variable.names=model_parameters,
+                     n.iter=20000)
+```
+
+### Check Convergence
+
+Misc trace plot
+
+```{r}
+traceplot(exp_sim[, "alpha[3]"])
+```
+
+#### Gelman Rubin Statistic
+
+All are 1.
+
+```{r}
+#gelman.diag(exp_sim, multivariate = FALSE)
+```
+
+### Check values
+
+```{r}
+jags_sum <- summary(exp_sim)
+df.stats = cbind(as.data.frame(jags_sum$statistics), as.data.frame(jags_sum$quantiles)) %>%
+  rownames_to_column(var = "index")
+df.stats
+```
+
+#### Save df
+
+```{r}
+write.csv(df.stats, "data/all_vars_time_by_region.csv", row.names = FALSE)
+```
+
+#### Extract each parameter
+
+Separate parameters into separate DFs
+
+```{r}
+df.stats.alpha = df.stats %>% filter(grepl("alpha", index)) %>% select(c("Mean","2.5%","97.5%")) %>% mutate(Region=regions)
+df.stats.beta = df.stats %>% filter(grepl("beta", index)) %>% select(c("Mean","2.5%","97.5%")) %>% mutate(Region=regions)
+df.stats.gamma = df.stats %>% filter(grepl("gamma", index)) %>% select(c("Mean","2.5%","97.5%")) %>% mutate(Region=regions)
+
+df.stats.phi = df.stats %>% filter(grepl("phi", index)) %>% select(c("Mean","2.5%","97.5%")) 
+df.stats.tau = df.stats %>% filter(grepl("tau", index)) %>% select(c("Mean","2.5%","97.5%")) 
+```
+
+Save alpha, beta, gamma, phi, tau
+
+```{r}
+write.csv(df.stats.alpha, "data/ar1/alpha.csv", row.names = FALSE)
+write.csv(df.stats.beta,  "data/ar1/beta.csv",  row.names = FALSE)
+write.csv(df.stats.gamma, "data/ar1/gamma.csv", row.names = FALSE)
+
+write.csv(df.stats.phi,  "data/ar1/phi.csv",    row.names = FALSE)
+write.csv(df.stats.tau,  "data/ar1/tau.csv",    row.names = FALSE)
+```
+
+Parse and save mu
+
+```{r}
+mu_vector = as.vector(df.stats%>%filter(grepl("mu", index))%>%pull(Mean))
+matrix_mu = matrix(mu_vector, nrow = length(mu_vector)/6, ncol = 6, byrow = T)
+df           = as.data.frame(matrix_mu)
+colnames(df) = regions
+df$time      = seq_len(nrow(df))
+write.csv(df, "data/ar1/mu.csv", row.names = FALSE)
+```
+
+Now get upper and lower CI bound for mu
+
+```{r}
+df.stats%>%filter(grepl("mu", index))%>%select("2.5%","97.5%")
+```
+
+```{r}
+# 2.5%
+mu_vector_025 = as.vector(df.stats%>%filter(grepl("mu", index))%>%pull("2.5%"))
+matrix_mu = matrix(mu_vector_025, nrow = length(mu_vector_025)/6, ncol = 6, byrow = T)
+df           = as.data.frame(matrix_mu)
+colnames(df) = regions
+df$time      = seq_len(nrow(df))
+write.csv(df, "data/ar1/mu025.csv", row.names = FALSE)
+# 97.5%
+mu_vector_975 = as.vector(df.stats%>%filter(grepl("mu", index))%>%pull("97.5%"))
+matrix_mu = matrix(mu_vector_975, nrow = length(mu_vector_975)/6, ncol = 6, byrow = T)
+df           = as.data.frame(matrix_mu)
+colnames(df) = regions
+df$time      = seq_len(nrow(df))
+write.csv(df, "data/ar1/mu975.csv", row.names = FALSE)
+```
