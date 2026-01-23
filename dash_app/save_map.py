@@ -48,24 +48,31 @@ fig = go.Figure(go.Choropleth(
     )
 ))
 
-# add annotations with white rectangular backgrounds
-annotations = []
-for _, row in means.iterrows():
-    region = row['Region']
-    pos = label_positions[region]
-    short_name = region.replace('HSE ', '').replace(' and ', ' & ')
+# add region labels (geo charts need a Scattergeo trace for lon/lat text)
+label_df = means[['Region', 'mean_trolleys']].copy()
+label_df['lat'] = label_df['Region'].map(lambda r: label_positions.get(r, {}).get('lat'))
+label_df['lon'] = label_df['Region'].map(lambda r: label_positions.get(r, {}).get('lon'))
+label_df = label_df.dropna(subset=['lat', 'lon'])
+label_df['label'] = label_df.apply(
+    lambda row: f"{row['Region'].replace('HSE ', '').replace(' and ', ' & ')}<br>{row['mean_trolleys']:.1f}",
+    axis=1,
+)
 
-    annotations.append(dict(
-        x=pos['lon'],
-        y=pos['lat'],
-        text=f"<b>{short_name}</b><br>{row['mean_trolleys']:.1f}",
-        showarrow=False,
-        font=dict(size=12, color='#333'),
-        bgcolor='rgba(255,255,255,0.9)',
-        bordercolor='#ccc',
-        borderwidth=1,
-        borderpad=6,
-    ))
+fig.add_trace(go.Scattergeo(
+    lat=label_df['lat'],
+    lon=label_df['lon'],
+    mode='markers+text',
+    marker=dict(
+        size=28,
+        color='rgba(255,255,255,0.9)',
+        line=dict(color='#ccc', width=1),
+    ),
+    text=label_df['label'],
+    textfont=dict(size=12, color='#333'),
+    textposition='middle center',
+    hoverinfo='skip',
+    showlegend=False,
+))
 
 fig.update_layout(
     geo=dict(
@@ -87,7 +94,6 @@ fig.update_layout(
         xanchor='center'
     ),
     font_family='Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-    annotations=annotations
 )
 
 # save

@@ -1,6 +1,7 @@
 import dash
 from dash import html, dcc, dash_table, callback, Output, Input
 import plotly.express as px
+import plotly.graph_objects as go
 import pandas as pd
 import json
 
@@ -27,6 +28,16 @@ name_map = {
 }
 means['geojson_name'] = means['Region'].map(name_map)
 
+# label positions (hand-picked for readability)
+label_positions = {
+    'HSE Dublin and Midlands': {'lat': 53.35, 'lon': -7.5},
+    'HSE Dublin and North East': {'lat': 53.85, 'lon': -6.4},
+    'HSE Dublin and South East': {'lat': 52.5, 'lon': -6.8},
+    'HSE Mid West': {'lat': 52.7, 'lon': -8.8},
+    'HSE South West': {'lat': 51.9, 'lon': -9.2},
+    'HSE West and North West': {'lat': 54.0, 'lon': -9.0},
+}
+
 # create map
 fig = px.choropleth_mapbox(
     means,
@@ -50,6 +61,32 @@ fig.update_layout(
     ),
     font_family='Inter, -apple-system, BlinkMacSystemFont, sans-serif'
 )
+
+# add region labels (mapbox charts need a Scattermapbox trace for lon/lat text)
+label_df = means[['Region', 'mean_trolleys']].copy()
+label_df['lat'] = label_df['Region'].map(lambda r: label_positions.get(r, {}).get('lat'))
+label_df['lon'] = label_df['Region'].map(lambda r: label_positions.get(r, {}).get('lon'))
+label_df = label_df.dropna(subset=['lat', 'lon'])
+label_df['label'] = label_df.apply(
+    lambda row: f"{row['Region'].replace('HSE ', '').replace(' and ', ' & ')}<br>{row['mean_trolleys']:.1f}",
+    axis=1,
+)
+
+fig.add_trace(go.Scattermapbox(
+    lat=label_df['lat'],
+    lon=label_df['lon'],
+    mode='markers+text',
+    marker=dict(
+        size=30,
+        color='rgba(255,255,255,0.85)',
+        line=dict(color='rgba(0,0,0,0.2)', width=1),
+    ),
+    text=label_df['label'],
+    textfont=dict(size=12, color='#333'),
+    textposition='middle center',
+    hoverinfo='skip',
+    showlegend=False,
+))
 
 # app
 app = dash.Dash(__name__)

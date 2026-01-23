@@ -1,0 +1,35 @@
+hospital,from_value,from_color,to_value,to_color,difference,from_date,to_date
+St Luke's General Hospital Kilkenny,9.0,green,10.0,amber,1.0,14/01/2026,18/01/2026
+UH Kerry,10.0,amber,11.0,red,1.0,18/01/2026,16/01/2026
+Wexford General Hospital,10.0,amber,11.0,red,1.0,14/01/2026,09/01/2026
+Wexford General Hospital,9.0,green,10.0,amber,1.0,15/01/2026,04/01/2026
+Portiuncula University Hospital,10.0,amber,11.0,red,1.0,10/01/2026,18/01/2026
+Portiuncula University Hospital,6.0,green,7.0,amber,1.0,13/01/2026,06/01/2026
+Naas General Hospital,9.0,green,10.0,amber,1.0,17/01/2026,19/01/2026
+MRH Mullingar,10.0,amber,11.0,red,1.0,15/01/2026,06/01/2026
+Tallaght University Hospital,14.0,green,15.0,amber,1.0,09/01/2026,17/01/2026
+Letterkenny University Hospital,9.0,green,10.0,amber,1.0,15/01/2026,18/01/2026
+Cavan General Hospital,9.0,green,10.0,amber,1.0,19/01/2026,14/01/2026
+MRH Mullingar,9.0,green,10.0,amber,1.0,07/01/2026,15/01/2026
+Our Lady of Lourdes Hospital,14.0,green,15.0,amber,1.0,06/01/2026,08/01/2026
+Cavan General Hospital,10.0,amber,12.0,red,2.0,14/01/2026,11/01/2026
+Tipperary University Hospital,9.0,green,11.0,red,2.0,10/01/2026,14/01/2026
+CHI at Crumlin,2.0,green,4.0,amber,2.0,15/01/2026,16/01/2026
+MRH Portlaoise,9.0,green,11.0,red,2.0,08/01/2026,13/01/2026
+Letterkenny University Hospital,10.0,amber,12.0,red,2.0,18/01/2026,16/01/2026
+Our Lady of Lourdes Hospital,15.0,amber,18.0,red,3.0,19/01/2026,14/01/2026
+Beaumont Hospital,14.0,green,17.0,red,3.0,14/01/2026,16/01/2026
+Mayo University Hospital,9.0,green,12.0,red,3.0,17/01/2026,16/01/2026
+St Luke's General Hospital Kilkenny,10.0,amber,14.0,red,4.0,18/01/2026,08/01/2026
+Naas General Hospital,10.0,amber,14.0,red,4.0,19/01/2026,15/01/2026
+Cork University Hospital,13.0,green,17.0,red,4.0,18/01/2026,02/01/2026
+St. James's Hospital,14.0,green,19.0,red,5.0,06/01/2026,18/01/2026
+Mater Misericordiae University Hospital,14.0,green,20.0,red,6.0,19/01/2026,14/01/2026
+Mercy University Hospital,5.0,green,11.0,red,6.0,03/01/2026,05/01/2026
+UH Kerry,4.0,green,10.0,amber,6.0,19/01/2026,18/01/2026
+St. Vincent's University Hospital,14.0,green,20.0,red,6.0,17/01/2026,06/01/2026
+Sligo University Hospital,8.0,green,16.0,red,8.0,02/01/2026,11/01/2026
+Tallaght University Hospital,15.0,amber,23.0,red,8.0,17/01/2026,13/01/2026
+Galway University Hospital,8.0,green,20.0,red,12.0,04/01/2026,10/01/2026
+UH Limerick,10.0,green,27.0,red,17.0,04/01/2026,05/01/2026
+National Total,308.0,none,346.0,red,38.0,10/01/2026,16/01/2026

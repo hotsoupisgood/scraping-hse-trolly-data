@@ -1,0 +1,28 @@
+hospital,boundary_type,below_threshold,at_threshold,proven
+Cavan General Hospital,green→amber,9,10,True
+Our Lady of Lourdes Hospital,green→amber,14,15,True
+Our Lady's Hospital Navan,green→amber,2,3,True
+CHI at Tallaght,green→amber,3,4,True
+CHI at Temple Street,green→amber,3,4,True
+CHI at Temple Street,amber→red,5,6,True
+MRH Mullingar,green→amber,9,10,True
+MRH Mullingar,amber→red,10,11,True
+Naas General Hospital,green→amber,9,10,True
+Tallaght University Hospital,green→amber,14,15,True
+Tallaght University Hospital,amber→red,15,16,True
+St Luke's General Hospital Kilkenny,green→amber,9,10,True
+St Luke's General Hospital Kilkenny,amber→red,10,11,True
+St. Vincent's University Hospital,green→amber,14,15,True
+Tipperary University Hospital,green→amber,9,10,True
+Tipperary University Hospital,amber→red,10,11,True
+Wexford General Hospital,green→amber,9,10,True
+Wexford General Hospital,amber→red,10,11,True
+Mercy University Hospital,amber→red,10,11,True
+UH Kerry,green→amber,9,10,True
+UH Kerry,amber→red,10,11,True
+UH Limerick,amber→red,15,16,True
+Letterkenny University Hospital,green→amber,9,10,True
+Portiuncula University Hospital,green→amber,6,7,True
+Portiuncula University Hospital,amber→red,10,11,True
+Sligo University Hospital,green→amber,9,10,True
+Sligo University Hospital,amber→red,10,11,True
