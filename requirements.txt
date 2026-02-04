@@ -6,3 +6,4 @@ numpy
 pyjags
 nbformat>=4.2.0
 seaborn
+openpyxl

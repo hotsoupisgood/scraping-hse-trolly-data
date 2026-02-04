@@ -24,7 +24,7 @@ With \~ rows (regions) x columns (weeks)
 1st column is the region names
 
 ```{r}
-uecDf    = read.csv('data/wide_weekly_scaledPer10k.csv')
+uecDf    = read.csv('../data/wide_weekly_scaledPer10k.csv')
 regions  = uecDf$Region # saving region names
 n.region = length(uecDf$Region) # number of regions
 uecDf    = uecDf %>% select(-Region) # remove region col
@@ -69,6 +69,16 @@ model{
                  beta[i]  * cos((2 * pi) * (t/52)) +
                  gamma[i] * sin((2 * pi) * (t/52))
     }
+    
+  
+    #------------
+    #Full conditional  mean used in the likelihood
+    #------------
+    fullmod[i,1] <- mu[i,1]
+    for(t in 2:T){
+      fullmod[i,t] <- mu[i,t] + phi * (y[i,t-1] - mu[i,t-1])
+    }
+
   
     #------------
     #Uninformative Priors
@@ -111,7 +121,7 @@ update(exp_jags, n.iter = 10000)
 
 ```{r}
 # Choose the parameters to watch
-model_parameters =  c("alpha","beta","gamma","tau","phi","mu")
+model_parameters =  c("alpha","beta","gamma","tau","phi","mu","fullmod")
 # Set up samples
 exp_sim=coda.samples(model=exp_jags, 
                      variable.names=model_parameters,
@@ -146,7 +156,7 @@ df.stats
 #### Save df
 
 ```{r}
-write.csv(df.stats, "data/all_vars_time_by_region.csv", row.names = FALSE)
+write.csv(df.stats, "../data/all_vars_time_by_region.csv", row.names = FALSE)
 ```
 
 #### Extract each parameter
@@ -157,20 +167,20 @@ Separate parameters into separate DFs
 df.stats.alpha = df.stats %>% filter(grepl("alpha", index)) %>% select(c("Mean","2.5%","97.5%")) %>% mutate(Region=regions)
 df.stats.beta = df.stats %>% filter(grepl("beta", index)) %>% select(c("Mean","2.5%","97.5%")) %>% mutate(Region=regions)
 df.stats.gamma = df.stats %>% filter(grepl("gamma", index)) %>% select(c("Mean","2.5%","97.5%")) %>% mutate(Region=regions)
-
 df.stats.phi = df.stats %>% filter(grepl("phi", index)) %>% select(c("Mean","2.5%","97.5%")) 
-df.stats.tau = df.stats %>% filter(grepl("tau", index)) %>% select(c("Mean","2.5%","97.5%")) 
+df.stats.tau = df.stats %>% filter(grepl("tau", index)) %>% select(c("Mean","2.5%","97.5%")) %>% mutate(Region=regions)
 ```
 
 Save alpha, beta, gamma, phi, tau
 
 ```{r}
-write.csv(df.stats.alpha, "data/ar1/alpha.csv", row.names = FALSE)
-write.csv(df.stats.beta,  "data/ar1/beta.csv",  row.names = FALSE)
-write.csv(df.stats.gamma, "data/ar1/gamma.csv", row.names = FALSE)
+write.csv(df.stats.alpha, "../data/ar1/alpha.csv", row.names = FALSE)
+write.csv(df.stats.beta,  "../data/ar1/beta.csv",  row.names = FALSE)
+write.csv(df.stats.gamma, "../data/ar1/gamma.csv", row.names = FALSE)
 
-write.csv(df.stats.phi,  "data/ar1/phi.csv",    row.names = FALSE)
-write.csv(df.stats.tau,  "data/ar1/tau.csv",    row.names = FALSE)
+write.csv(df.stats.phi,  "../data/ar1/phi.csv",    row.names = FALSE)
+write.csv(df.stats.tau,  "../data/ar1/tau.csv",    row.names = FALSE)
+
 ```
 
 Parse and save mu
@@ -181,7 +191,7 @@ matrix_mu = matrix(mu_vector, nrow = length(mu_vector)/6, ncol = 6, byrow = T)
 df           = as.data.frame(matrix_mu)
 colnames(df) = regions
 df$time      = seq_len(nrow(df))
-write.csv(df, "data/ar1/mu.csv", row.names = FALSE)
+write.csv(df, "../data/ar1/mu.csv", row.names = FALSE)
 ```
 
 Now get upper and lower CI bound for mu
@@ -197,12 +207,40 @@ matrix_mu = matrix(mu_vector_025, nrow = length(mu_vector_025)/6, ncol = 6, byro
 df           = as.data.frame(matrix_mu)
 colnames(df) = regions
 df$time      = seq_len(nrow(df))
-write.csv(df, "data/ar1/mu025.csv", row.names = FALSE)
+write.csv(df, "../data/ar1/mu025.csv", row.names = FALSE)
 # 97.5%
 mu_vector_975 = as.vector(df.stats%>%filter(grepl("mu", index))%>%pull("97.5%"))
 matrix_mu = matrix(mu_vector_975, nrow = length(mu_vector_975)/6, ncol = 6, byrow = T)
 df           = as.data.frame(matrix_mu)
 colnames(df) = regions
 df$time      = seq_len(nrow(df))
-write.csv(df, "data/ar1/mu975.csv", row.names = FALSE)
+write.csv(df, "../data/ar1/mu975.csv", row.names = FALSE)
+```
+
+## Full model
+
+```{r}
+fullmod_vector = as.vector(df.stats%>%filter(grepl("fullmod", index))%>%pull(Mean))
+matrix_fullmod = matrix(fullmod_vector, nrow = length(fullmod_vector)/6, ncol = 6, byrow = T)
+df           = as.data.frame(matrix_fullmod)
+colnames(df) = regions
+df$time      = seq_len(nrow(df))
+write.csv(df, "../data/ar1/full_model/fullmod.csv", row.names = FALSE)
+```
+
+```{r}
+# 2.5%
+fullmod_vector_025 = as.vector(df.stats%>%filter(grepl("fullmod", index))%>%pull("2.5%"))
+matrix_fullmod = matrix(fullmod_vector_025, nrow = length(fullmod_vector_025)/6, ncol = 6, byrow = T)
+df           = as.data.frame(matrix_fullmod)
+colnames(df) = regions
+df$time      = seq_len(nrow(df))
+write.csv(df, "../data/ar1/full_model/fullmod025.csv", row.names = FALSE)
+# 97.5%
+fullmod_vector_975 = as.vector(df.stats%>%filter(grepl("fullmod", index))%>%pull("97.5%"))
+matrix_fullmod = matrix(fullmod_vector_975, nrow = length(fullmod_vector_975)/6, ncol = 6, byrow = T)
+df           = as.data.frame(matrix_fullmod)
+colnames(df) = regions
+df$time      = seq_len(nrow(df))
+write.csv(df, "../data/ar1/full_model/fullmod975.csv", row.names = FALSE)
 ```
