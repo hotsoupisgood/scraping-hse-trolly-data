@@ -3,9 +3,6 @@
 Per10k is already fitted; this adds the bed, budget, and 65+ scalings so the
 multi-scaling ranking sensitivity uses the AR(2) base throughout.
 """
-import os
-os.environ.setdefault('MPLCONFIGDIR', '/tmp/claude-501/mpl')
-
 from pyjags_pipeline import run_model
 
 SCALINGS = [

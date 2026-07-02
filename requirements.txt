@@ -1,10 +1,29 @@
-pandas
-requests
-beautifulsoup4
-lxml
-html5lib
-numpy
-pyjags
-nbformat>=4.2.0
-seaborn
-openpyxl
+# Python 3.14. pyjags also requires the JAGS system library (brew install jags).
+
+# Modelling
+numpy==2.3.5
+pandas==2.3.3
+scipy==1.17.0
+statsmodels==0.14.6
+arviz==1.0.0
+pyjags==2.4.0
+
+# Plotting
+matplotlib==3.10.8
+seaborn==0.13.2
+
+# Scraping / preprocessing
+requests==2.32.5
+beautifulsoup4==4.14.3
+lxml==6.0.2
+html5lib==1.1
+openpyxl==3.1.5
+pdfplumber==0.11.9
+
+# Notebooks (run_models.ipynb is the entrypoint)
+ipykernel==7.1.0
+ipywidgets==8.1.8
+nbformat==5.10.4
+
+# Examples (phase explorer app)
+streamlit==1.55.0

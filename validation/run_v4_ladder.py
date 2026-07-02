@@ -8,9 +8,6 @@ Extensions on the AR(2) base (each independent):
 
 Outputs land in data/models/wide_weekly_scaledPer10k/v4.x/ via the pipeline.
 """
-import os
-os.environ.setdefault('MPLCONFIGDIR', '/tmp/claude-501/mpl')
-
 from pyjags_pipeline import run_model
 
 LADDER = ['v4.1', 'v4.2', 'v4.3', 'v4.4', 'v4.5', 'v4.6', 'v4.7', 'v4.8', 'v4.9']

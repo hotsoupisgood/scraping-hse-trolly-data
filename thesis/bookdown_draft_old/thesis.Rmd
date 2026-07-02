@@ -664,16 +664,8 @@ alpha_means <- tibble(
                   function(i) quantile(raw[[paste0("alpha[", i, "]")]], 0.975))
 )
 
-name_map <- c(
-  "HSE Dublin and Midlands HR"   = "HSE Dublin and Midlands",
-  "HSE Dublin and North East HR" = "HSE Dublin and North East",
-  "HSE Dublin and South East HR" = "HSE Dublin and South East",
-  "HSE Midwest HR"               = "HSE Mid West",
-  "HSE South West HR"            = "HSE South West",
-  "HSE West and North West HR"   = "HSE West and North West"
-)
-shp <- sf::read_sf("../data/mapping/hse_regions.geojson") |>
-  mutate(region = name_map[HR_operational_name]) |>
+shp <- sf::read_sf("../data/mapping/hse_regions_fullhse.geojson") |>
+  mutate(region = Region) |>
   left_join(alpha_means, by = "region")
 
 ni <- rnaturalearth::ne_states(country = "united kingdom", returnclass = "sf") |>

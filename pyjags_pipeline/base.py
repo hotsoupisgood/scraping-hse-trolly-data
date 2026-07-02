@@ -272,7 +272,7 @@ class BaseModel(ABC):
         gelman_summary = (
             result.gelman
             .assign(param=result.gelman['param'].str.replace(r'\[\d+\]$', '', regex=True))
-            .groupby('param', sort=False)[['Point est.', 'Upper C.I.']]
+            .groupby('param', sort=False)[['Point est.']]
             .max()
             .reset_index()
         )

@@ -1,12 +1,32 @@
-# Modeling HSE daily trolly data
+# Modeling HSE daily trolley data
 [hsereport.ie](https://hsereport.ie)
 
-Project exploring the HSE Emergency Care Report Trolley data. Current aim is to fit autoregressive models for exploration. Long term goals involve applying a bayesian ranking model such as in [this paper](http://arxiv.org/abs/2510.14723).
-Note: Currently the organization of the repo is a bit of a mess.
+Bayesian analysis of the HSE Urgent and Emergency Care Report trolley data. Weekly regional trolley rates are modelled in JAGS with an AR(2) error structure, a region-specific annual cycle, a date-anchored New Year effect, and a Mid West reset block. Models are compared by DIC across several rate scalings. The manuscript lives in `thesis/`.
 
-![Our poster presentation](./Poster/Poster_Presentation.png "Poster 2026/02/04")
-## Exploratory analysis
-* Using bayes/rJAGS: AR(1) model of weekly rate (per 10,000 people) with an annual cycle component
+![Our poster presentation](./poster/Poster_Presentation.png "Poster 2026/02/04")
+
+## Setup
+
+Requires Python 3.14 and the JAGS system library (`brew install jags` on macOS).
+
+```sh
+python3 -m venv venv
+./venv/bin/pip install -r requirements.txt
+```
+
+## Running the models
+
+`run_models.ipynb` at the project root is the canonical entrypoint. It fits each model via `pyjags_pipeline.run_model(version, data_path)` and compares DIC. Outputs (samples, DIC, Gelman-Rubin, plots, significance tests) go to `data/models/{csv_stem}/{version}/`.
+
+Model definitions live in `pyjags_pipeline/defs/`, one file per model.
+
+## Data lineage
+
+1. Daily scrape of the HSE TrolleyGAR report (one GET per day from `https://uec.hse.ie/uec/TGAR.php`) produces the raw CSVs in `data/raw data/`.
+2. `preprocessing/generate_*_scaled.py` turns the weekly regional export into the scaled response CSVs `data/wide_weekly_scaled*.csv`.
+3. `run_models.ipynb` fits the models on those CSVs.
+
+Reproducible refit scripts for the reported results are in `validation/`.
 
 ## Trolley rate scalings
 The weekly regional trolley count is normalised under several denominators (response = trolleys per unit). These are the complete set of scalings, all in `data/wide_weekly_scaled*.csv`:

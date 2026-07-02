@@ -103,8 +103,7 @@ def flatten_samples(pyjags_samples, n_chains):
 def compute_gelman(pyjags_samples):
     """Compute R-hat for all parameters using ArviZ.
 
-    Returns DataFrame with columns: param, Point est., Upper C.I.
-    (matching the R gelman.csv format).
+    Returns DataFrame with columns: param, Point est.
     """
     idata = from_pyjags(pyjags_samples)
     rhat = az.rhat(idata)
@@ -117,7 +116,6 @@ def compute_gelman(pyjags_samples):
             rows.append({
                 'param': label,
                 'Point est.': float(r),
-                'Upper C.I.': float(r),  # ArviZ doesn't provide upper CI; use point est.
             })
 
     return pd.DataFrame(rows)
